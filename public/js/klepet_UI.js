@@ -150,7 +150,7 @@ function dodajSliko(vhodnoBesedilo) {
   var povezava = vhodnoBesedilo.match(/http[s]?:\/\/(\S+)(.png|.jpg|.gif)/g);
   if (povezava != null) {
     for (var i = 0; i < povezava.length; i++) {
-        vhodnoBesedilo = "<br> <img hspace='20' width='200' src='" + povezava[i] + "' />";
+        vhodnoBesedilo = vhodnoBesedilo + "<br> <img hspace='20' width='200' src='" + povezava[i] + "' />";
     }
   }
   return vhodnoBesedilo;
