@@ -1,7 +1,8 @@
 function divElementEnostavniTekst(sporocilo) {
   var jeSmesko = sporocilo.indexOf('http://sandbox.lavbic.net/teaching/OIS/gradivo/') > -1;
   var jeSlika = sporocilo.match(/http[s]?:\/\/(\S+)(.png|.jpg|.gif)/g);
-  if (jeSmesko || (jeSlika != null)) {
+  var jeVideo = sporocilo.match(/https:\/\/www.youtube.com\/watch\?v(\S+)/g);
+  if (jeSmesko || (jeSlika != null) || (jeVideo != null)) {
     sporocilo = sporocilo
                 .replace(/\</g, '&lt;')
                 .replace(/\>/g, '&gt;')
@@ -9,7 +10,9 @@ function divElementEnostavniTekst(sporocilo) {
                 .replace(/&lt;br&gt;/g, '<br>')
                 .replace('png\' /&gt;', 'png\' />')
                 .replace('jpg\' /&gt;', 'jpg\' />')
-                .replace('gif\' /&gt;', 'gif\' />');
+                .replace('gif\' /&gt;', 'gif\' />')
+                .replace(/&lt;iframe/g, '<iframe')
+                .replace(/allowfullscreen&gt;&lt;\/iframe&gt;/g, 'allowfullscreen></iframe');
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
   } else {
     return $('<div style="font-weight: bold;"></div>').text(sporocilo);
@@ -24,6 +27,7 @@ function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
   sporocilo = dodajSmeske(sporocilo);
   sporocilo = dodajSliko(sporocilo);
+  sporocilo = dodajVideo(sporocilo);
   var sistemskoSporocilo;
 
   if (sporocilo.charAt(0) == '/') {
@@ -152,6 +156,16 @@ function dodajSliko(vhodnoBesedilo) {
   if (povezava != null) {
     for (var i = 0; i < povezava.length; i++) {
         vhodnoBesedilo = vhodnoBesedilo + "<br> <img hspace='20' width='200' src='" + povezava[i] + "' />";
+    }
+  }
+  return vhodnoBesedilo;
+}  
+        
+function dodajVideo(vhodnoBesedilo) {
+  var povezava = vhodnoBesedilo.match(/https:\/\/www.youtube.com\/watch\?v(\S+)/g);
+  if (povezava != null) {
+    for (var i = 0; i < povezava.length; i++) {
+      vhodnoBesedilo = vhodnoBesedilo + "<br><iframe src='https://www.youtube.com/embed/"+ povezava[i].substring(32) +"' width='200' height='150' style='margin-left:20px' allowfullscreen></iframe>";
     }
   }
   return vhodnoBesedilo;
