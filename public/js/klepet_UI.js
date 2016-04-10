@@ -120,6 +120,14 @@ $(document).ready(function() {
     });
   });
 
+  socket.on('dregljaj', function(sporocilo) {
+    $('#vsebina').jrumble();
+    $('#vsebina').trigger('startRumble');
+    setTimeout(function() {
+      $('#vsebina').trigger('stopRumble');
+    }, 1500);
+  });
+
   setInterval(function() {
     socket.emit('kanali');
     socket.emit('uporabniki', {kanal: trenutniKanal});
@@ -131,9 +139,9 @@ $(document).ready(function() {
     procesirajVnosUporabnika(klepetApp, socket);
     return false;
   });
-  
-  
 });
+
+
 
 function dodajSmeske(vhodnoBesedilo) {
   var preslikovalnaTabela = {
