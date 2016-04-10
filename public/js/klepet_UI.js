@@ -1,7 +1,15 @@
 function divElementEnostavniTekst(sporocilo) {
   var jeSmesko = sporocilo.indexOf('http://sandbox.lavbic.net/teaching/OIS/gradivo/') > -1;
-  if (jeSmesko) {
-    sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
+  var jeSlika = sporocilo.match(/http[s]?:\/\/(\S+)(.png|.jpg|.gif)/g);
+  if (jeSmesko || (jeSlika != null)) {
+    sporocilo = sporocilo
+                .replace(/\</g, '&lt;')
+                .replace(/\>/g, '&gt;')
+                .replace(/&lt;img/g, '<img')
+                .replace(/&lt;br&gt;/g, '<br>')
+                .replace('png\' /&gt;', 'png\' />')
+                .replace('jpg\' /&gt;', 'jpg\' />')
+                .replace('gif\' /&gt;', 'gif\' />');
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
   } else {
     return $('<div style="font-weight: bold;"></div>').text(sporocilo);
@@ -15,6 +23,7 @@ function divElementHtmlTekst(sporocilo) {
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
   sporocilo = dodajSmeske(sporocilo);
+  sporocilo = dodajSliko(sporocilo);
   var sistemskoSporocilo;
 
   if (sporocilo.charAt(0) == '/') {
@@ -99,6 +108,11 @@ $(document).ready(function() {
     for (var i=0; i < uporabniki.length; i++) {
       $('#seznam-uporabnikov').append(divElementEnostavniTekst(uporabniki[i]));
     }
+    //dopolnjena implementacija zasebnih sporocil
+    $("#seznam-uporabnikov div").click(function() {
+      $('#poslji-sporocilo').val("/zasebno \"" + $(this).text() + "\"");
+      $('#poslji-sporocilo').focus();
+    });
   });
 
   setInterval(function() {
@@ -128,6 +142,16 @@ function dodajSmeske(vhodnoBesedilo) {
     vhodnoBesedilo = vhodnoBesedilo.replace(smesko,
       "<img src='http://sandbox.lavbic.net/teaching/OIS/gradivo/" +
       preslikovalnaTabela[smesko] + "' />");
+  }
+  return vhodnoBesedilo;
+}
+
+function dodajSliko(vhodnoBesedilo) {
+  var povezava = vhodnoBesedilo.match(/http[s]?:\/\/(\S+)(.png|.jpg|.gif)/g);
+  if (povezava != null) {
+    for (var i = 0; i < povezava.length; i++) {
+        vhodnoBesedilo = "<br> <img hspace='20' width='200' src='" + povezava[i] + "' />";
+    }
   }
   return vhodnoBesedilo;
 }
