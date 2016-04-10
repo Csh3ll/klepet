@@ -108,6 +108,7 @@ $(document).ready(function() {
     for (var i=0; i < uporabniki.length; i++) {
       $('#seznam-uporabnikov').append(divElementEnostavniTekst(uporabniki[i]));
     }
+
     //dopolnjena implementacija zasebnih sporocil
     $("#seznam-uporabnikov div").click(function() {
       $('#poslji-sporocilo').val("/zasebno \"" + $(this).text() + "\"");
