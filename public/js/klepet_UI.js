@@ -123,7 +123,6 @@ $(document).ready(function() {
 });
 
 
-
 function dodajSmeske(vhodnoBesedilo) {
   var preslikovalnaTabela = {
     ";)": "wink.png",
